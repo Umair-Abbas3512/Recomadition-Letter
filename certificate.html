@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Letter of Recommendation</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Source+Sans+Pro:wght@400;600&display=swap');
+
+        :root {
+            --page-width: 210mm;
+            --page-height: 297mm;
+            --margin: 15mm;  /* Reduced margin */
+            --content-width: calc(var(--page-width) - 2 * var(--margin));
+        }
+
+        body {
+            width: var(--page-width);
+            min-height: var(--page-height);
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            font-family: 'Source Sans Pro', sans-serif;
+            line-height: 1.5;
+        }
+
+        .letter {
+            width: var(--content-width);
+            height: calc(var(--page-height) - 2 * var(--margin));
+            margin: var(--margin);
+            padding: var(--margin);
+            background-color: white;
+            box-sizing: border-box;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .letterhead {
+            text-align: center;
+            margin-bottom: 10mm;  /* Reduced margin */
+            border-bottom: 1px solid #2c3e50;
+        }
+
+        .logo {
+            width: 20mm;
+            height: 20mm;
+            margin: 0 auto 3mm;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background-color: white;
+        }
+
+        .logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            max-width: 100%;
+            max-height: 100%;
+        }
+
+        /* Add fallback logo styles */
+        .logo .fallback-logo {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(44, 62, 80, 0.05);
+            border-radius: 50%;
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 20pt;  /* Smaller heading */
+            color: #2c3e50;
+            margin: 3mm 0;
+        }
+
+        .institution {
+            font-size: 10pt;
+            margin: 1mm 0;
+        }
+
+        .sub-header {
+            margin: 5mm 0;
+            font-size: 9pt;
+        }
+
+        .content {
+            flex: 1;
+            font-size: 10pt;  /* Smaller text */
+            text-align: justify;
+            line-height: 1.4;
+            margin: 5mm 0;
+            max-height: 120mm;  /* Control content height */
+        }
+
+        .content p {
+            margin-bottom: 3mm;  /* Reduced paragraph spacing */
+        }
+
+        .signature {
+            margin-top: 15mm;  /* Reduced margin */
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 10mm;
+            align-items: start;
+        }
+
+        .signature-left {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            width: 50mm;  /* Smaller signature area */
+        }
+
+        .signature img {
+            width: 35mm;  /* Smaller signature */
+            height: auto;
+            margin-bottom: 1mm;
+            object-fit: contain;
+        }
+
+        .signature-line {
+            width: 100%;
+            border-top: 1px solid #2c3e50;
+            margin: 2mm 0;
+        }
+
+        .signature-name {
+            font-weight: 600;
+            font-size: 11pt;
+            color: #2c3e50;
+            margin-bottom: 1mm;
+        }
+
+        .signature-title {
+            font-size: 10pt;
+            color: #555;
+        }
+
+        .stamp {
+            position: absolute;
+            right: var(--margin);
+            bottom: 30mm;
+            width: 25mm;  /* Smaller stamp */
+            height: 25mm;
+            border: 2px solid #2c3e50;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 7pt;
+            color: #2c3e50;
+            transform: rotate(-15deg);
+            background-color: rgba(44, 62, 80, 0.03);
+            line-height: 1.4;
+        }
+
+        .footer {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 20mm;
+            margin-top: 10mm;
+            padding-top: 5mm;
+            border-top: 2px solid #2c3e50;
+            font-size: 8pt;
+            color: #2c3e50;
+            position: absolute;
+            bottom: var(--margin);
+            left: var(--margin);
+            right: var(--margin);
+        }
+
+        .footer-text {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 5mm;
+            text-align: left;
+        }
+
+        .footer-contact {
+            border-right: 1px solid #eee;
+            padding-right: 5mm;
+        }
+
+        .footer-verification {
+            text-align: center;
+        }
+
+        .footer-social {
+            text-align: right;
+            border-left: 1px solid #eee;
+            padding-left: 5mm;
+        }
+
+        .reference-number {
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            letter-spacing: 1px;
+            color: #2c3e50;
+            background: rgba(44, 62, 80, 0.05);
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+
+        .qr-code-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2mm;
+        }
+
+        @media print {
+            @page {
+                size: A4;
+                margin: 0;
+            }
+
+            body {
+                width: var(--page-width);
+                height: var(--page-height);
+                overflow: hidden;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            .letter {
+                margin: 0;
+                padding: var(--margin);
+                box-shadow: none;
+                page-break-after: avoid;
+                page-break-inside: avoid;
+            }
+
+            .content {
+                max-height: none;
+                overflow: visible;
+            }
+
+            .qr-code:hover {
+                transform: none;
+            }
+            .qr-code::after {
+                display: none;
+            }
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
+</head>
+<body>
+    <div class="letter">
+        <div class="letterhead">
+            <div class="logo">
+                <img 
+                    src="./quiad.png" 
+                    alt="University Logo" 
+                    onerror="this.style.display='none'; createFallbackLogo(this.parentElement);"
+                >
+            </div>
+            <h1>Letter of Recommendation</h1>
+            <div class="institution">QUAID-I-AZAM UNIVERSITY, ISLAMABAD</div>
+            <div class="registration">Registration Number: <span id="regNumber"></span></div>
+        </div>
+        <div class="sub-header">
+            <div class="header-contact">
+                <div>Department of Computer Science</div>
+                <div>QUAID-I-AZAM UNIVERSITY, ISLAMABAD</div>
+                <div>Tel: +1 (555) 123-4567</div>
+                <div>Email: cs.department@quiad.edu</div>
+            </div>
+            <div class="date" id="date"></div>
+        </div>
+        
+        <div class="content">
+            <div id="letterContent"></div>
+        </div>
+        
+        <div class="signature">
+            <div class="signature-left">
+                <img src="./inam.png" alt="Digital Signature" id="signatureImage">
+                <div class="signature-line"></div>
+                <div class="signature-name" id="recommenderName"></div>
+                <div class="signature-title" id="recommenderTitle"></div>
+            </div>
+            <div class="stamp">
+                OFFICE OF<br>
+                THE PROFESSOR<br>
+                <span id="currentDate"></span>
+            </div>
+        </div>
+
+        <div class="footer">
+            <div class="footer-text">
+                <div class="footer-contact">
+                    <p>Contact Information:</p>
+                    <p>Department of Computer Science</p>
+                    <p>QUAID-I-AZAM UNIVERSITY</p>
+                    <p>Islamabad, Pakistan</p>
+                </div>
+                <div class="footer-verification">
+                    <p>Document Verification</p>
+                    <p>Reference: <span class="reference-number" id="referenceNumber"></span></p>
+                    <p>Issue Date: <span id="issueDate"></span></p>
+                    <p>Valid Until: <span id="validUntil"></span></p>
+                </div>
+                <div class="footer-social">
+                    <p>Connect With Us:</p>
+                    <p>www.cs.qau.edu.pk</p>
+                    <p>@QAU_Official</p>
+                    <p>cs@qau.edu.pk</p>
+                </div>
+            </div>
+            <div class="qr-code-container">
+                <div class="qr-code" id="qrCode"></div>
+                <div>Scan to verify</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function createFallbackLogo(container) {
+            const fallback = document.createElement('div');
+            fallback.className = 'fallback-logo';
+            
+            // Create SVG logo
+            const svg = `
+                <svg width="100%" height="100%" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M50,10 L90,30 L90,70 L50,90 L10,70 L10,30 Z" 
+                          fill="none" 
+                          stroke="#2c3e50" 
+                          stroke-width="2"/>
+                    <text x="50" y="55" 
+                          text-anchor="middle" 
+                          font-size="12" 
+                          font-family="Arial" 
+                          fill="#2c3e50">
+                        UNIVERSITY
+                    </text>
+                </svg>
+            `;
+            
+            fallback.innerHTML = svg;
+            container.appendChild(fallback);
+        }
+
+        window.onload = function() {
+            const params = new URLSearchParams(window.location.search);
+            
+            // Generate unique reference number with current date
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const random = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
+            const refNumber = `LOR-${year}${month}${day}-${random}`;
+            
+            // Update all references to the number
+            document.getElementById('regNumber').textContent = refNumber;
+            document.getElementById('referenceNumber').textContent = refNumber;
+            
+            // Format current date nicely
+            const formattedDate = now.toLocaleDateString('en-US', {
+                month: 'long',
+                day: 'numeric',
+                year: 'numeric'
+            });
+            document.getElementById('date').textContent = formattedDate;
+            
+            // Format stamp date
+            const stampDate = now.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short'
+            });
+            document.getElementById('currentDate').textContent = stampDate;
+
+            // Format issue date
+            const issueDate = now.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+            document.getElementById('issueDate').textContent = issueDate;
+
+            // Set validity for one year
+            const validityDate = new Date(now);
+            validityDate.setFullYear(validityDate.getFullYear() + 1);
+            const validUntil = validityDate.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+            document.getElementById('validUntil').textContent = validUntil;
+            
+            // Set recommender info
+            document.getElementById('recommenderName').textContent = params.get('recommender_name');
+            document.getElementById('recommenderTitle').textContent = params.get('recommender_title');
+            
+            // Add text truncation function
+            function truncateText(text, maxLength) {
+                if (text && text.length > maxLength) {
+                    return text.substring(0, maxLength - 3) + '...';
+                }
+                return text;
+            }
+            
+            // Update text truncation limits
+            const letterContent = `
+                <p>I am writing this letter of recommendation for ${truncateText(params.get('candidate_name'), 40)}.</p>
+                
+                <p>${truncateText(params.get('relationship_description'), 150)}</p>
+                
+                <p>${truncateText(params.get('candidate_strengths'), 200)}</p>
+                
+                ${params.get('contribution') ? `<p>${truncateText(params.get('contribution'), 150)}</p>` : ''}
+                
+                <p>${truncateText(params.get('ranking'), 150)}</p>
+                
+                <p>${truncateText(params.get('final_recommendation'), 150)}</p>
+            `;
+            
+            document.getElementById('letterContent').innerHTML = letterContent;
+
+            // Create signature image programmatically if no image available
+            const signatureImg = document.getElementById('signatureImage');
+            signatureImg.onerror = function() {
+                const canvas = document.createElement('canvas');
+                canvas.width = 151; // 40mm at 96dpi
+                canvas.height = 57; // 15mm at 96dpi
+                
+                const ctx = canvas.getContext('2d');
+                
+                // Set up signature style
+                ctx.strokeStyle = '#2c3e50';
+                ctx.lineWidth = 1.5;
+                ctx.lineCap = 'round';
+                
+                // Draw signature base
+                ctx.font = 'italic 24px "Dancing Script", cursive';
+                ctx.fillStyle = '#2c3e50';
+                
+                const name = params.get('recommender_name');
+                ctx.fillText(name, 10, 35);
+                
+                this.src = canvas.toDataURL('image/png');
+                this.style.width = '40mm';
+                this.style.height = 'auto';
+                this.style.maxHeight = '15mm';
+                this.style.marginBottom = '2mm';
+            };
+
+            // Generate QR code
+            const qrData = {
+                documentType: 'Letter of Recommendation',
+                referenceNo: refNumber,
+                candidate: params.get('candidate_name'),
+                recommender: params.get('recommender_name'),
+                issueDate: formattedDate,
+                verifyUrl: 'www.yourwebsite.com/verify/' + refNumber
+            };
+
+            // Create QR Code immediately
+            QRCode.toCanvas(
+                document.getElementById('qrCode'), // target element
+                JSON.stringify(qrData),           // data to encode
+                {
+                    width: 76,                    // fixed size for A4
+                    height: 76,
+                    margin: 1,
+                    errorCorrectionLevel: 'H',    // highest error correction
+                    color: {
+                        dark: '#2c3e50',
+                        light: '#ffffff'
+                    }
+                }
+            ).then(() => {
+                console.log('QR Code generated successfully');
+            }).catch(err => {
+                console.error('Error generating QR code:', err);
+            });
+        };
+    </script>
+</body>
+</html>

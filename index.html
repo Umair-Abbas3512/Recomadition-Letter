@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Letter of Recommendation Form</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    form {
+      max-width: 800px;
+      margin: auto;
+      background-color: #f0f0f0;
+      padding: 25px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px #ccc;
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 15px;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+    button {
+      margin-top: 20px;
+      padding: 12px 24px;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    .error-message {
+      color: #dc3545;
+      background-color: #ffe6e6;
+      padding: 10px;
+      border-radius: 4px;
+      margin: 10px 0;
+      display: none;
+    }
+    /* Add this to your existing styles */
+    .connection-status {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      padding: 8px 15px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: bold;
+    }
+    .online {
+      background-color: #28a745;
+      color: white;
+    }
+    .offline {
+      background-color: #dc3545;
+      color: white;
+    }
+    .error {
+      border-color: #dc3545;
+    }
+    /* Add these to your existing styles */
+    input.error, textarea.error {
+      border-color: #dc3545;
+      background-color: #fff8f8;
+    }
+
+    input:focus, textarea:focus {
+      outline: none;
+      border-color: #007BFF;
+      box-shadow: 0 0 3px #007BFF;
+    }
+  </style>
+</head>
+<body>
+  <div id="connectionStatus" class="connection-status"></div>
+
+<h2>Letter of Recommendation Form</h2>
+
+<div id="errorMessage" class="error-message"></div>
+
+<form id="recommendationForm" onsubmit="return handleSubmit(event)">
+  <label for="candidate_name">Candidate Full Name:</label>
+  <input type="text" id="candidate_name" name="candidate_name" required>
+
+  <label for="recommender_name">Recommender Name:</label>
+  <input type="text" id="recommender_name" name="recommender_name" required>
+
+  <label for="recommender_title">Recommender Title and Affiliation:</label>
+  <input type="text" id="recommender_title" name="recommender_title" placeholder="e.g., Professor of Humanities, College of the Ozarks" required>
+
+  <label for="date">Date:</label>
+  <input type="date" id="date" name="date" required>
+
+  <label for="relationship_description">Relationship to Candidate (how and when you met, etc.):</label>
+  <textarea id="relationship_description" name="relationship_description" rows="4" required></textarea>
+
+  <label for="candidate_strengths">Describe Candidate’s Strengths and Skills:</label>
+  <textarea id="candidate_strengths" name="candidate_strengths" rows="6" required></textarea>
+
+  <label for="contribution">Candidate’s Contribution or Assistance (if applicable):</label>
+  <textarea id="contribution" name="contribution" rows="4"></textarea>
+
+  <label for="ranking">Overall Assessment / Ranking:</label>
+  <textarea id="ranking" name="ranking" rows="4" required></textarea>
+
+  <label for="final_recommendation">Final Recommendation Statement:</label>
+  <textarea id="final_recommendation" name="final_recommendation" rows="3" required></textarea>
+
+  <button type="submit">Submit Recommendation</button>
+</form>
+
+<script>
+function handleSubmit(event) {
+    event.preventDefault();
+    const form = document.getElementById('recommendationForm');
+    const errorMessage = document.getElementById('errorMessage');
+    
+    try {
+        // Validate form data
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData);
+        
+        // Check if all required fields are filled
+        let isEmpty = false;
+        let firstEmptyField = null;
+        
+        for (let [key, value] of formData.entries()) {
+            if (!value && form.elements[key].hasAttribute('required')) {
+                isEmpty = true;
+                if (!firstEmptyField) {
+                    firstEmptyField = form.elements[key];
+                }
+                form.elements[key].classList.add('error');
+            } else {
+                form.elements[key].classList.remove('error');
+            }
+        }
+        
+        if (isEmpty) {
+            firstEmptyField.focus();
+            throw new Error('Please fill in all required fields');
+        }
+
+        // Create URL with form data
+        const params = new URLSearchParams(formData);
+        const url = `certificate.html?${params.toString()}`;
+        
+        // Store backup
+        localStorage.setItem('formBackup', JSON.stringify(data));
+        
+        // Redirect to certificate page
+        window.location.href = url;
+        
+        return false;
+    } catch (error) {
+        errorMessage.textContent = error.message;
+        errorMessage.style.display = 'block';
+        return false;
+    }
+}
+</script>
+
+</body>
+</html>
